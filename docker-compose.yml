@@ -1,0 +1,117 @@
+version: '3.9'
+
+services:
+
+  # ── Databases ────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: ce_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres        # each service creates its own DB via Prisma
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - collab_net
+
+  mongodb:
+    image: mongo:7-jammy
+    container_name: ce_mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - collab_net
+
+  redis:
+    image: redis:7-alpine
+    container_name: ce_redis
+    restart: unless-stopped
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    networks:
+      - collab_net
+
+  # ── Services (uncomment as you build each one) ────────────────
+
+  # auth-service:
+  #   build: ./services/auth-service
+  #   container_name: ce_auth
+  #   restart: unless-stopped
+  #   env_file: ./services/auth-service/.env
+  #   ports:
+  #     - '3001:3001'
+  #   depends_on:
+  #     - postgres
+  #   networks:
+  #     - collab_net
+
+  # room-service:
+  #   build: ./services/room-service
+  #   container_name: ce_room
+  #   restart: unless-stopped
+  #   env_file: ./services/room-service/.env
+  #   ports:
+  #     - '3002:3002'
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #   networks:
+  #     - collab_net
+
+  # collab-service:
+  #   build: ./services/collab-service
+  #   container_name: ce_collab
+  #   restart: unless-stopped
+  #   env_file: ./services/collab-service/.env
+  #   ports:
+  #     - '3003:3003'
+  #   depends_on:
+  #     - redis
+  #   networks:
+  #     - collab_net
+
+  # chat-service:
+  #   build: ./services/chat-service
+  #   container_name: ce_chat
+  #   restart: unless-stopped
+  #   env_file: ./services/chat-service/.env
+  #   ports:
+  #     - '3004:3004'
+  #   depends_on:
+  #     - mongodb
+  #     - redis
+  #   networks:
+  #     - collab_net
+
+  # snapshot-service:
+  #   build: ./services/snapshot-service
+  #   container_name: ce_snapshot
+  #   restart: unless-stopped
+  #   env_file: ./services/snapshot-service/.env
+  #   depends_on:
+  #     - redis
+  #   networks:
+  #     - collab_net
+
+# ── Volumes ───────────────────────────────────────────────────
+volumes:
+  postgres_data:
+  mongo_data:
+  redis_data:
+
+# ── Network ───────────────────────────────────────────────────
+networks:
+  collab_net:
+    driver: bridge
