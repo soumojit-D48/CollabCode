@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs'
 import { signToken, ConflictError, UnauthorizedError } from '@collab/shared'
-import prisma from '../prisma'
+import { prisma } from '../prisma'
 import { RegisterInput, LoginInput } from '../validators/auth.validators'
 
 export const registerUser = async (data: RegisterInput) => {
