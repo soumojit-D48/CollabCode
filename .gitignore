@@ -4,5 +4,9 @@ dist/
 *.log
 .DS_Store
 
+# Generated Prisma clients
+services/*/generated/
+services/*/node_modules/.prisma/
+
 *.md
 !README.md
