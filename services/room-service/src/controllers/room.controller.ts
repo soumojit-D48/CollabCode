@@ -1,5 +1,5 @@
 import { Response, NextFunction } from 'express'
-import { MemberRole } from '@prisma/client'
+import { MemberRole } from '../../generated/client'
 import { AuthRequest, logger } from '@collab/shared'
 import { createRoomSchema, updateRoomSchema } from '../validators/room.validators'
 import {

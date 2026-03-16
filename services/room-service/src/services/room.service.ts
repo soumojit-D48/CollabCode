@@ -1,4 +1,4 @@
-import { MemberRole } from '@prisma/client'
+import { MemberRole } from '../../generated/client'
 import { NotFoundError, ForbiddenError, ConflictError } from '@collab/shared'
 import prisma from '../prisma'
 import { CreateRoomInput, UpdateRoomInput } from '../validators/room.validators'
