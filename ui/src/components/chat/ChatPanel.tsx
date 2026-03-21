@@ -19,12 +19,10 @@ export default function ChatPanel({ roomId, onSend }: ChatPanelProps) {
   const { messages, loading, isConnected } = useChatStore()
   const activeUsers = useEditorStore((s) => s.activeUsers)
 
-  // scroll to bottom when new message arrives
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
 
-  // get color for a user
   const getUserColor = (userId: string) => {
     return activeUsers.find((u) => u.userId === userId)?.color ?? '#60A5FA'
   }
@@ -41,7 +39,6 @@ export default function ChatPanel({ roomId, onSend }: ChatPanelProps) {
         height: '100%',
       }}
     >
-      {/* Chat header */}
       <div
         style={{
           borderBottom: '1px solid var(--color-border)',
@@ -67,7 +64,6 @@ export default function ChatPanel({ roomId, onSend }: ChatPanelProps) {
           </span>
         </div>
 
-        {/* Connection status */}
         <div className="flex items-center gap-1.5">
           {isConnected
             ? <Wifi size={13} style={{ color: 'var(--color-success)' }} />
@@ -86,7 +82,6 @@ export default function ChatPanel({ roomId, onSend }: ChatPanelProps) {
         </div>
       </div>
 
-      {/* Messages */}
       <div
         style={{ flex: 1, overflowY: 'auto', padding: '16px 12px' }}
         className="flex flex-col gap-3"

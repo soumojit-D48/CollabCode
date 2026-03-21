@@ -18,7 +18,6 @@ export default function ChatMessage({
     <div
       className={`flex gap-2.5 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}
     >
-      {/* Avatar */}
       {!isOwn && (
         <div
           style={{
@@ -45,7 +44,6 @@ export default function ChatMessage({
         style={{ maxWidth: '75%' }}
         className={`flex flex-col gap-1 ${isOwn ? 'items-end' : 'items-start'}`}
       >
-        {/* Username + time */}
         {!isOwn && (
           <div className="flex items-center gap-1.5">
             <span
@@ -65,12 +63,11 @@ export default function ChatMessage({
               }}
             >
               {timeAgo(message.createdAt)}
-            </span>
-          </div>
-        )}
+          </span>
+        </div>
+      )}
 
-        {/* Bubble */}
-        <div
+      <div
           style={{
             backgroundColor: isOwn
               ? 'var(--color-brand)'
