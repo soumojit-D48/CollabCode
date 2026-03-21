@@ -3,20 +3,22 @@ import { Socket } from 'socket.io-client'
 import { getCollabSocket, disconnectCollabSocket } from '@/lib/collabSocket'
 import { useEditorStore } from '@/store/editor.store'
 import { useAuthStore } from '@/store/auth.store'
-import { ActiveUser, Cursor } from '@/types'
+import { ActiveUser, Cursor, RoomFile } from '@/types'
 
 export const useCollab = (roomId: string) => {
   const socketRef = useRef<Socket | null>(null)
   const token     = useAuthStore((s) => s.token)
 
   const {
-    setContent,
     setActiveUsers,
     addUser,
     removeUser,
     setCursor,
     setConnected,
     setReconnecting,
+    updateFile,
+    addFile,
+    removeFile,
     reset,
   } = useEditorStore()
 
@@ -26,7 +28,6 @@ export const useCollab = (roomId: string) => {
     const socket = getCollabSocket(token)
     socketRef.current = socket
 
-    // ── Connect ───────────────────────────────────────────
     socket.connect()
 
     socket.on('connect', () => {
@@ -35,47 +36,51 @@ export const useCollab = (roomId: string) => {
       socket.emit('room:join', roomId)
     })
 
-    socket.on('disconnect', () => {
-      setConnected(false)
-    })
+    socket.on('disconnect', () => setConnected(false))
 
-    socket.on('connect_error', () => {
-      setReconnecting(true)
-    })
+    socket.on('connect_error', () => setReconnecting(true))
 
-    // ── Room events ───────────────────────────────────────
     socket.on('room:joined', (payload: {
-      roomId:  string
+      roomId: string
       content: string
-      users:   ActiveUser[]
+      users: ActiveUser[]
     }) => {
-      setContent(payload.content)
       setActiveUsers(payload.users)
     })
 
-    socket.on('room:user-joined', (user: ActiveUser) => {
-      addUser(user)
-    })
+    socket.on('room:user-joined', (user: ActiveUser) => addUser(user))
+    socket.on('room:user-left',   (userId: string)   => removeUser(userId))
 
-    socket.on('room:user-left', (userId: string) => {
-      removeUser(userId)
-    })
-
-    // ── Code sync ─────────────────────────────────────────
-    socket.on('code:updated', (payload: {
+    socket.on('file:updated', (payload: {
+      fileId:   string
       content:  string
       senderId: string
     }) => {
-      // update content — CodeEditor must NOT re-emit this back
-      setContent(payload.content)
+      updateFile(payload.fileId, { content: payload.content })
     })
 
-    // ── Cursor sync ───────────────────────────────────────
-    socket.on('cursor:updated', (cursor: Cursor) => {
-      setCursor(cursor)
+    socket.on('file:opened', (payload: { fileId: string; content: string }) => {
+      updateFile(payload.fileId, { content: payload.content })
     })
 
-    // ── Cleanup ───────────────────────────────────────────
+    socket.on('file:created', ({ file }: { file: RoomFile }) => {
+      addFile(file)
+    })
+
+    socket.on('file:deleted', ({ fileId }: { fileId: string }) => {
+      removeFile(fileId)
+    })
+
+    socket.on('file:renamed', (payload: {
+      fileId: string
+      name:   string
+      path:   string
+    }) => {
+      updateFile(payload.fileId, { name: payload.name, path: payload.path })
+    })
+
+    socket.on('cursor:updated', (cursor: Cursor) => setCursor(cursor))
+
     return () => {
       socket.emit('room:leave', roomId)
       socket.removeAllListeners()
@@ -84,14 +89,36 @@ export const useCollab = (roomId: string) => {
     }
   }, [roomId, token])
 
-  // ── Emit helpers ──────────────────────────────────────
-  const sendCodeChange = (content: string) => {
-    socketRef.current?.emit('code:change', { roomId, content })
+  const sendFileChange = (fileId: string, content: string) => {
+    socketRef.current?.emit('file:change', { roomId, fileId, content })
+  }
+
+  const sendFileOpen = (fileId: string) => {
+    socketRef.current?.emit('file:open', { roomId, fileId })
+  }
+
+  const sendFileCreate = (file: RoomFile) => {
+    socketRef.current?.emit('file:create', { roomId, file })
+  }
+
+  const sendFileDelete = (fileId: string) => {
+    socketRef.current?.emit('file:delete', { roomId, fileId })
+  }
+
+  const sendFileRename = (fileId: string, name: string, path: string) => {
+    socketRef.current?.emit('file:rename', { roomId, fileId, name, path })
   }
 
   const sendCursorMove = (line: number, column: number) => {
     socketRef.current?.emit('cursor:move', { roomId, line, column })
   }
 
-  return { sendCodeChange, sendCursorMove }
+  return {
+    sendFileChange,
+    sendFileOpen,
+    sendFileCreate,
+    sendFileDelete,
+    sendFileRename,
+    sendCursorMove,
+  }
 }

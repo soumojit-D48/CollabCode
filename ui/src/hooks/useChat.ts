@@ -28,7 +28,6 @@ export const useChat = (roomId: string) => {
     socket.on('connect', () => {
       setConnected(true)
       socket.emit('room:join', roomId)
-      // load history on join
       setLoading(true)
       socket.emit('history:get', { roomId, limit: 100 })
     })
@@ -38,7 +37,6 @@ export const useChat = (roomId: string) => {
     })
 
     socket.on('room:joined', () => {
-      // room joined — history:get already emitted above
     })
 
     socket.on('history:loaded', (messages: Message[]) => {
@@ -63,7 +61,6 @@ export const useChat = (roomId: string) => {
     }
   }, [roomId, token])
 
-  // ── Send message ──────────────────────────────────────
   const sendMessage = (content: string) => {
     if (!content.trim()) return
     socketRef.current?.emit('message:send', { roomId, content })

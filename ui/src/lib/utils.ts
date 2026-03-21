@@ -1,12 +1,10 @@
 import { clsx, type ClassValue } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 
-// cn — merge tailwind classes safely
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-// Format timestamp → "2 min ago" style
 export function timeAgo(date: string | Date): string {
   const now  = new Date()
   const then = new Date(date)
@@ -18,7 +16,6 @@ export function timeAgo(date: string | Date): string {
   return then.toLocaleDateString()
 }
 
-// Language → display color
 export const LANGUAGE_COLORS: Record<string, string> = {
   javascript: '#F7DF1E',
   typescript: '#3178C6',
@@ -33,12 +30,10 @@ export const LANGUAGE_COLORS: Record<string, string> = {
 export const getLanguageColor = (lang: string) =>
   LANGUAGE_COLORS[lang] ?? '#64748B'
 
-// Cursor colors (must match backend)
 export const CURSOR_COLORS = [
   '#F87171', '#FB923C', '#FBBF24', '#34D399',
   '#60A5FA', '#A78BFA', '#F472B6', '#2DD4BF',
 ]
 
-// Get initials from username
 export const getInitials = (username: string) =>
   username.slice(0, 2).toUpperCase()

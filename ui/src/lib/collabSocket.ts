@@ -6,10 +6,8 @@ const COLLAB_URL =
 let socket: Socket | null = null
 
 export const getCollabSocket = (token: string): Socket => {
-  // if socket exists and is connected, return it
   if (socket && socket.connected) return socket
 
-  // if socket exists but disconnected, clean it up
   if (socket) {
     socket.removeAllListeners()
     socket.disconnect()
