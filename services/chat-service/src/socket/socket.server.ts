@@ -8,7 +8,6 @@ import { registerChatHandlers } from '../handlers/chat.handler'
 
 export const createChatSocketServer = (httpServer: http.Server) => {
   const io = new Server(httpServer, {
-    // cors: { origin: '*', methods: ['GET', 'POST'] },
     cors: {
       origin: 'http://localhost:3000',
       methods: ['GET', 'POST'],
@@ -20,7 +19,6 @@ export const createChatSocketServer = (httpServer: http.Server) => {
   io.adapter(createAdapter(pubClient, subClient))
   logger.info('Chat Socket.IO Redis adapter attached')
 
-  // JWT verification — runs once before connection is accepted
   io.use((socket, next) => {
     const raw =
       socket.handshake.auth?.token ??

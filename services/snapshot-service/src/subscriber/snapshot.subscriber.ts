@@ -20,7 +20,6 @@ export const startSubscriber = async () => {
   subClient.on('error',  (e: Error) => logger.error('Snapshot sub error',  { err: e.message }))
   mainClient.on('error', (e: Error) => logger.error('Snapshot main error', { err: e.message }))
 
-  // ── Strategy 1: Interval polling ──────────────────────────
   const INTERVAL = Number(process.env.SNAPSHOT_INTERVAL_MS ?? 30_000)
 
   const pollAndSave = async () => {
@@ -43,8 +42,6 @@ export const startSubscriber = async () => {
   setInterval(pollAndSave, INTERVAL)
   logger.info(`Snapshot polling every ${INTERVAL / 1000}s`)
 
-  // ── Strategy 2: Redis keyspace notifications ───────────────
-  // Fires immediately whenever a room:*:content key is SET
   await subClient.config('SET', 'notify-keyspace-events', 'KEA')
   await subClient.subscribe('__keyevent@0__:set', (err) => {
     if (err) logger.error('Snapshot subscribe error', { err: err.message })

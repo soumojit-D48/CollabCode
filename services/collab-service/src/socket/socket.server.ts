@@ -15,7 +15,6 @@ export const createSocketServer = (httpServer: http.Server) => {
   const io = new Server<ClientToServerEvents, ServerToClientEvents, {}, SocketData>(
     httpServer,
     {
-      // cors: { origin: '*', methods: ['GET', 'POST'] },
       cors: {
         origin: 'http://localhost:3000',
         methods: ['GET', 'POST'],
@@ -28,7 +27,6 @@ export const createSocketServer = (httpServer: http.Server) => {
   io.adapter(createAdapter(pubClient, subClient))
   logger.info('Socket.IO Redis adapter attached')
 
-  // JWT verification — runs once before connection is accepted
   io.use((socket, next) => {
     const raw =
       socket.handshake.auth?.token ??

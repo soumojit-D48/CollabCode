@@ -75,7 +75,6 @@ export const registerChatHandlers = (_io: IO, socket: Soc) => {
         createdAt: msg.createdAt,
       }
 
-      // broadcast to ALL users in room including sender
       socket.to(roomId).emit('message:new', payload)
       socket.emit('message:new', payload)
     } catch (err) {
