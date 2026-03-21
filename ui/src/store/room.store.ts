@@ -58,7 +58,6 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
     try {
       const res = await roomApi.post('/rooms', data)
       const room: Room = res.data
-      // add to myRooms list immediately
       set((state) => ({
         myRooms: [room, ...state.myRooms],
         loading: false,
@@ -79,7 +78,6 @@ export const useRoomStore = create<RoomStore>((set, get) => ({
 
   joinRoom: async (roomId) => {
     await roomApi.post(`/rooms/${roomId}/join`)
-    // refresh my rooms
     get().fetchMyRooms()
   },
 

@@ -64,13 +64,11 @@ export const useAuthStore = create<AuthStore>((set) => ({
     set({ user: null, token: null })
   },
 
-  // call this on app load to restore session from localStorage
   hydrate: () => {
     if (typeof window === 'undefined') return
     const token = localStorage.getItem('token')
     if (!token) return
 
-    // decode JWT payload (no verification — just read userId/username)
     try {
       const payload = JSON.parse(atob(token.split('.')[1]))
       set({

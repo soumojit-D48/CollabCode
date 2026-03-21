@@ -22,7 +22,6 @@ export const useChatStore = create<ChatStore>((set) => ({
 
   addMessage: (message) =>
     set((state) => ({
-      // avoid duplicate messages
       messages: state.messages.some((m) => m.id === message.id)
         ? state.messages
         : [...state.messages, message],
