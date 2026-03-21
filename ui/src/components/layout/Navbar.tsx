@@ -21,7 +21,6 @@ export default function Navbar() {
       }}
       className="h-14 flex items-center justify-between px-6"
     >
-      {/* Logo */}
       <div className="flex items-center gap-2.5">
         <div
           style={{
@@ -43,7 +42,6 @@ export default function Navbar() {
         </span>
       </div>
 
-      {/* Right side */}
       <div className="flex items-center gap-4">
         {/* User info */}
         <div className="flex items-center gap-2">
@@ -77,7 +75,6 @@ export default function Navbar() {
           }}
         />
 
-        {/* Logout */}
         <button
           onClick={handleLogout}
           style={{ color: 'var(--color-text-muted)' }}

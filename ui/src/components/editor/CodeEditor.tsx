@@ -6,7 +6,6 @@ import type { OnMount, OnChange } from '@monaco-editor/react'
 import type * as Monaco from 'monaco-editor'
 import { useEditorStore } from '@/store/editor.store'
 
-// Monaco must NEVER be SSR rendered
 const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
   ssr: false,
   loading: () => (
@@ -34,53 +33,48 @@ const MonacoEditor = dynamic(() => import('@monaco-editor/react'), {
 
 interface CodeEditorProps {
   roomId:          string
+  content:         string
   onCodeChange:    (content: string) => void
   onCursorChange:  (line: number, column: number) => void
 }
 
-// track whether current update came from server (to prevent re-emit)
 let isRemoteUpdate = false
 
 export default function CodeEditor({
   roomId,
+  content,
   onCodeChange,
   onCursorChange,
 }: CodeEditorProps) {
   const editorRef      = useRef<Monaco.editor.IStandaloneCodeEditor | null>(null)
   const decorationsRef = useRef<string[]>([])
 
-  const content     = useEditorStore((s) => s.content)
   const language    = useEditorStore((s) => s.language)
   const cursors     = useEditorStore((s) => s.cursors)
   const activeUsers = useEditorStore((s) => s.activeUsers)
 
-  // ── Mount editor ────────────────────────────────────────
   const handleMount: OnMount = (editor) => {
     editorRef.current = editor
 
-    // cursor move → emit to server
     editor.onDidChangeCursorPosition((e) => {
       onCursorChange(e.position.lineNumber, e.position.column)
     })
   }
 
-  // ── Code change ─────────────────────────────────────────
   const handleChange: OnChange = (value) => {
-    if (isRemoteUpdate) return   // came from server — do NOT re-emit
+    if (isRemoteUpdate) return
     if (value !== undefined) onCodeChange(value)
   }
 
-  // ── Apply remote content without moving cursor ──────────
   useEffect(() => {
     const editor = editorRef.current
     if (!editor) return
 
     const current = editor.getValue()
-    if (current === content) return   // no change
+    if (current === content) return
 
     isRemoteUpdate = true
 
-    // preserve cursor position
     const position = editor.getPosition()
     editor.setValue(content)
     if (position) editor.setPosition(position)
@@ -88,7 +82,6 @@ export default function CodeEditor({
     isRemoteUpdate = false
   }, [content])
 
-  // ── Render other users' cursors ─────────────────────────
   useEffect(() => {
     const editor = editorRef.current
     if (!editor) return
@@ -107,7 +100,6 @@ export default function CodeEditor({
       },
     }))
 
-    // inject CSS for each cursor color dynamically
     Object.values(cursors).forEach((cursor) => {
       const shortId = cursor.userId.slice(0, 8)
       const styleId = `cursor-style-${shortId}`
