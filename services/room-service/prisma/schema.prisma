@@ -23,6 +23,7 @@ model Room {
   createdAt DateTime     @default(now())
   updatedAt DateTime     @updatedAt
   members   RoomMember[]
+  files      File[]
 }
 
 model RoomMember {
@@ -34,4 +35,18 @@ model RoomMember {
   room     Room       @relation(fields: [roomId], references: [id], onDelete: Cascade)
 
   @@unique([roomId, userId])
+}
+
+
+model File {
+  id        String   @id @default(uuid())
+  roomId    String
+  name      String
+  path      String
+  content   String   @default("")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+
+  @@unique([roomId, path])
 }
