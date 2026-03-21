@@ -94,7 +94,6 @@ export default function RoomsPage() {
           </button>
         </div>
 
-        {/* Tabs + Search bar */}
         <div className="flex items-center justify-between mb-6 gap-4">
 
           {/* Tabs */}
@@ -146,7 +145,6 @@ export default function RoomsPage() {
             ))}
           </div>
 
-          {/* Search */}
           <div
             style={{
               backgroundColor: 'var(--color-surface)',
@@ -172,7 +170,6 @@ export default function RoomsPage() {
             />
           </div>
 
-          {/* Refresh */}
           <button
             onClick={() => { fetchMyRooms(); fetchPublicRooms() }}
             style={{ color: 'var(--color-text-muted)' }}
@@ -182,9 +179,7 @@ export default function RoomsPage() {
           </button>
         </div>
 
-        {/* Room grid */}
         {loading && filteredRooms.length === 0 ? (
-          // Loading skeleton
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[...Array(6)].map((_, i) => (
               <div
@@ -200,7 +195,6 @@ export default function RoomsPage() {
             ))}
           </div>
         ) : filteredRooms.length === 0 ? (
-          // Empty state
           <div
             style={{
               backgroundColor: 'var(--color-surface)',
@@ -243,7 +237,6 @@ export default function RoomsPage() {
         )}
       </main>
 
-      {/* Create room modal */}
       {showModal && <CreateRoomModal onClose={() => setShowModal(false)} />}
     </div>
   )

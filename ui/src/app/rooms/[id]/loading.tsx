@@ -8,7 +8,6 @@ export default function Loading() {
         flexDirection: 'column',
       }}
     >
-      {/* Top bar skeleton */}
       <div
         style={{
           backgroundColor: 'var(--color-surface)',
@@ -17,9 +16,7 @@ export default function Loading() {
         }}
       />
 
-      {/* Editor + chat skeleton */}
       <div style={{ flex: 1, display: 'flex' }}>
-        {/* Editor area */}
         <div
           style={{
             flex: 1,
@@ -40,7 +37,6 @@ export default function Loading() {
           </span>
         </div>
 
-        {/* Chat skeleton */}
         <div
           style={{
             width: 300,
