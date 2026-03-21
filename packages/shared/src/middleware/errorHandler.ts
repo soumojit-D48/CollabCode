@@ -13,7 +13,6 @@ export const errorHandler = (
     return
   }
 
-  // unexpected error — log it, don't leak internals
   logger.error('Unhandled error', { message: err.message, stack: err.stack })
   res.status(500).json({ message: 'Internal server error' })
 }
