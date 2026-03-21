@@ -52,12 +52,10 @@ export default function CreateRoomModal({ onClose }: CreateRoomModalProps) {
       onClose()
       router.push(`/rooms/${room.id}`)
     } catch {
-      // error handled in store
     }
   }
 
   return (
-    // Backdrop
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
       style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}

@@ -40,11 +40,9 @@ export default function RoomCard({ room, onDelete }: RoomCardProps) {
       }}
       className="p-4 group hover:border-[var(--color-brand)] hover:bg-[var(--color-surface-2)]"
     >
-      {/* Top row */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            {/* Owner crown */}
             {isOwner && (
               <Crown
                 size={13}
@@ -58,8 +56,6 @@ export default function RoomCard({ room, onDelete }: RoomCardProps) {
               {room.name}
             </h3>
           </div>
-
-          {/* Language badge */}
           <div className="flex items-center gap-1.5">
             <span
               style={{
@@ -82,8 +78,6 @@ export default function RoomCard({ room, onDelete }: RoomCardProps) {
             </span>
           </div>
         </div>
-
-        {/* Delete button — owner only */}
         {isOwner && onDelete && (
           <button
             onClick={handleDelete}
@@ -94,10 +88,7 @@ export default function RoomCard({ room, onDelete }: RoomCardProps) {
           </button>
         )}
       </div>
-
-      {/* Bottom row */}
       <div className="flex items-center justify-between">
-        {/* Member count */}
         <div
           className="flex items-center gap-1.5"
           style={{ color: 'var(--color-text-muted)' }}
@@ -108,8 +99,6 @@ export default function RoomCard({ room, onDelete }: RoomCardProps) {
             {room.members?.length === 1 ? 'member' : 'members'}
           </span>
         </div>
-
-        {/* Public / Private badge */}
         <div
           className="flex items-center gap-1"
           style={{

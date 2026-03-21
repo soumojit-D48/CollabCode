@@ -3,7 +3,6 @@ export default function Loading() {
     <div
       style={{ backgroundColor: 'var(--color-bg)', minHeight: '100vh' }}
     >
-      {/* Navbar skeleton */}
       <div
         style={{
           backgroundColor: 'var(--color-surface)',
@@ -13,7 +12,6 @@ export default function Loading() {
       />
 
       <div className="max-w-6xl mx-auto px-6 py-8">
-        {/* Header skeleton */}
         <div className="flex items-center justify-between mb-8">
           <div>
             <div
@@ -36,9 +34,8 @@ export default function Loading() {
           </div>
         </div>
 
-        {/* Cards skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {[1, 2, 3].map((i) => (
             <div
               key={i}
               style={{
@@ -46,7 +43,6 @@ export default function Loading() {
                 border: '1px solid var(--color-border)',
                 borderRadius: 'var(--radius-lg)',
                 height: 100,
-                opacity: 1 - i * 0.1,
               }}
             />
           ))}
