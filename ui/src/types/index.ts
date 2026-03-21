@@ -23,6 +23,16 @@ export interface RoomMember {
   joinedAt: string
 }
 
+export interface RoomFile {
+  id:        string
+  roomId:    string
+  name:      string
+  path:      string
+  content:   string
+  createdAt: string
+  updatedAt: string
+}
+
 export interface ActiveUser {
   userId:   string
   username: string
