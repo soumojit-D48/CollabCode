@@ -13,6 +13,7 @@
     "dev:collab": "npm run dev --workspace=services/collab-service",
     "dev:chat": "npm run dev --workspace=services/chat-service",
     "dev:snapshot": "npm run dev --workspace=services/snapshot-service",
+    "dev:execution": "npm run dev --workspace=services/execution-service",
     "migrate:auth": "npm run db:migrate --workspace=services/auth-service",
     "migrate:room": "npm run db:migrate --workspace=services/room-service",
     "migrate:all": "npm run migrate:auth && npm run migrate:room"
