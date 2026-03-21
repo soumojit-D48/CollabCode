@@ -42,7 +42,6 @@ export default function LoginPage() {
       await login(data.email, data.password)
       router.push('/rooms')
     } catch {
-      // error is set in the store
     }
   }
 
@@ -53,7 +52,6 @@ export default function LoginPage() {
     >
       <div className="w-full max-w-md">
 
-        {/* Logo */}
         <div className="flex items-center gap-3 mb-8">
           <div
             style={{
@@ -72,7 +70,6 @@ export default function LoginPage() {
           </span>
         </div>
 
-        {/* Card */}
         <div
           style={{
             backgroundColor: 'var(--color-surface)',
@@ -94,7 +91,6 @@ export default function LoginPage() {
             Sign in to your account
           </p>
 
-          {/* Global error */}
           {error && (
             <div
               style={{
@@ -111,7 +107,6 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
-            {/* Email */}
             <div>
               <label
                 style={{ color: 'var(--color-text-dim)' }}
@@ -140,7 +135,6 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Password */}
             <div>
               <label
                 style={{ color: 'var(--color-text-dim)' }}
@@ -179,7 +173,6 @@ export default function LoginPage() {
               )}
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
@@ -196,7 +189,6 @@ export default function LoginPage() {
           </form>
         </div>
 
-        {/* Footer */}
         <p
           style={{ color: 'var(--color-text-muted)' }}
           className="text-sm text-center mt-4"

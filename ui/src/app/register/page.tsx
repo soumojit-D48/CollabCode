@@ -46,7 +46,6 @@ export default function RegisterPage() {
       await registerUser(data.email, data.username, data.password)
       router.push('/rooms')
     } catch {
-      // error set in store
     }
   }
 
@@ -57,7 +56,6 @@ export default function RegisterPage() {
     >
       <div className="w-full max-w-md">
 
-        {/* Logo */}
         <div className="flex items-center gap-3 mb-8">
           <div
             style={{
@@ -76,7 +74,6 @@ export default function RegisterPage() {
           </span>
         </div>
 
-        {/* Card */}
         <div
           style={{
             backgroundColor: 'var(--color-surface)',
@@ -98,7 +95,6 @@ export default function RegisterPage() {
             Start coding together in seconds
           </p>
 
-          {/* Global error */}
           {error && (
             <div
               style={{
@@ -115,7 +111,6 @@ export default function RegisterPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
-            {/* Email */}
             <div>
               <label
                 style={{ color: 'var(--color-text-dim)' }}
@@ -144,7 +139,6 @@ export default function RegisterPage() {
               )}
             </div>
 
-            {/* Username */}
             <div>
               <label
                 style={{ color: 'var(--color-text-dim)' }}
@@ -173,7 +167,6 @@ export default function RegisterPage() {
               )}
             </div>
 
-            {/* Password */}
             <div>
               <label
                 style={{ color: 'var(--color-text-dim)' }}
@@ -212,7 +205,6 @@ export default function RegisterPage() {
               )}
             </div>
 
-            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
@@ -229,7 +221,6 @@ export default function RegisterPage() {
           </form>
         </div>
 
-        {/* Footer */}
         <p
           style={{ color: 'var(--color-text-muted)' }}
           className="text-sm text-center mt-4"
