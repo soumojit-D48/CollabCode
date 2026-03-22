@@ -2,80 +2,64 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Plus, RefreshCw, Search } from 'lucide-react'
-import Navbar from '@/components/layout/Navbar'
-import RoomCard from '@/components/rooms/RoomCard'
-import CreateRoomModal from '@/components/rooms/CreateRoomModal'
+import { Plus, Search, RefreshCw } from 'lucide-react'
+import Navbar           from '@/components/layout/Navbar'
+import RoomCard         from '@/components/rooms/RoomCard'
+import CreateRoomModal  from '@/components/rooms/CreateRoomModal'
 import { useAuthStore } from '@/store/auth.store'
 import { useRoomStore } from '@/store/room.store'
 
 export default function RoomsPage() {
   const router = useRouter()
-  const { hydrate, user } = useAuthStore()
+  const { hydrate, user }  = useAuthStore()
   const {
-    myRooms,
-    publicRooms,
+    myRooms, publicRooms,
     loading,
-    fetchMyRooms,
-    fetchPublicRooms,
-    deleteRoom,
+    fetchMyRooms, fetchPublicRooms,
   } = useRoomStore()
 
-  const [showModal, setShowModal] = useState(false)
-  const [activeTab, setActiveTab] = useState<'my' | 'public'>('my')
+  const [showModal,   setShowModal]   = useState(false)
+  const [activeTab,   setActiveTab]   = useState<'my' | 'public'>('my')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => { hydrate() }, [])
 
   useEffect(() => {
-    hydrate()
-    setHydrated(true)
-  }, [])
-
-  useEffect(() => {
-    if (!hydrated) return
-    if (!user) {
-      const token = localStorage.getItem('token')
-      if (!token) {
-        router.replace('/login')
-        return
-      }
-    }
+    if (!user) { router.replace('/login'); return }
     fetchMyRooms()
     fetchPublicRooms()
-  }, [user, hydrated])
+  }, [user])
 
-  const handleDelete = async (roomId: string) => {
-    if (!confirm('Delete this room? This cannot be undone.')) return
-    await deleteRoom(roomId)
-  }
-
-  const rooms = activeTab === 'my' ? myRooms : publicRooms
+  const rooms         = activeTab === 'my' ? myRooms : publicRooms
   const filteredRooms = rooms.filter((r) =>
     r.name.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
-    <div
-      style={{ backgroundColor: 'var(--color-bg)', minHeight: '100vh' }}
-    >
+    <div style={{ backgroundColor: 'var(--color-bg)', minHeight: '100vh' }}>
       <Navbar />
 
-      <main className="max-w-6xl mx-auto px-6 py-8">
-
-        {/* Page header */}
-        <div className="flex items-center justify-between mb-8">
+      <main
+        style={{
+          maxWidth: '1100px',
+          margin:   '0 auto',
+          padding:  '40px 24px',
+        }}
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between mb-8">
           <div>
             <h1
-              style={{ color: 'var(--color-text)' }}
-              className="text-2xl font-bold"
+              style={{
+                fontSize:   '28px',
+                fontWeight: 800,
+                color:      'var(--color-text)',
+                marginBottom: 6,
+              }}
             >
               Rooms
             </h1>
-            <p
-              style={{ color: 'var(--color-text-muted)' }}
-              className="text-sm mt-1"
-            >
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '14px' }}>
               Create or join a room to start coding together
             </p>
           </div>
@@ -84,112 +68,131 @@ export default function RoomsPage() {
             onClick={() => setShowModal(true)}
             style={{
               backgroundColor: 'var(--color-brand)',
-              borderRadius: 'var(--radius-md)',
-              color: 'white',
+              borderRadius:    'var(--radius-md)',
+              color:           'white',
+              border:          'none',
+              padding:         '10px 20px',
+              fontSize:        '14px',
+              fontWeight:      600,
+              cursor:          'pointer',
+              display:         'flex',
+              alignItems:      'center',
+              gap:             8,
+              transition:      'opacity 0.15s',
             }}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold hover:opacity-90 transition-opacity"
+            onMouseEnter={(e) => e.currentTarget.style.opacity = '0.85'}
+            onMouseLeave={(e) => e.currentTarget.style.opacity = '1'}
           >
             <Plus size={16} />
             New Room
           </button>
         </div>
 
+        {/* Tabs + Search */}
         <div className="flex items-center justify-between mb-6 gap-4">
 
           {/* Tabs */}
           <div
             style={{
+              display:         'flex',
               backgroundColor: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-md)',
-              padding: '3px',
+              border:          '1px solid var(--color-border)',
+              borderRadius:    'var(--radius-lg)',
+              padding:         '4px',
+              gap:             4,
             }}
-            className="flex"
           >
-            {(['my', 'public'] as const).map((tab) => (
+            {([
+              { key: 'my',     label: `My Rooms (${myRooms.length})` },
+              { key: 'public', label: `Public Rooms (${publicRooms.length})` },
+            ] as const).map(({ key, label }) => (
               <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
+                key={key}
+                onClick={() => setActiveTab(key)}
                 style={{
-                  borderRadius: 'var(--radius-sm)',
-                  backgroundColor: activeTab === tab
+                  padding:         '7px 18px',
+                  borderRadius:    'var(--radius-md)',
+                  fontSize:        '13px',
+                  fontWeight:      activeTab === key ? 700 : 400,
+                  border:          'none',
+                  cursor:          'pointer',
+                  transition:      'all 0.15s',
+                  backgroundColor: activeTab === key
                     ? 'var(--color-surface-3)'
                     : 'transparent',
-                  color: activeTab === tab
+                  color: activeTab === key
                     ? 'var(--color-text)'
                     : 'var(--color-text-muted)',
-                  padding: '6px 16px',
-                  fontSize: '13px',
-                  fontWeight: activeTab === tab ? 600 : 400,
-                  transition: 'all 0.15s',
                 }}
               >
-                {tab === 'my' ? 'My Rooms' : 'Public Rooms'}
-                <span
-                  style={{
-                    marginLeft: '6px',
-                    backgroundColor: activeTab === tab
-                      ? 'var(--color-brand-dim)'
-                      : 'var(--color-surface-2)',
-                    color: activeTab === tab
-                      ? 'var(--color-brand)'
-                      : 'var(--color-text-muted)',
-                    borderRadius: '10px',
-                    padding: '1px 7px',
-                    fontSize: '11px',
-                  }}
-                >
-                  {tab === 'my' ? myRooms.length : publicRooms.length}
-                </span>
+                {label}
               </button>
             ))}
           </div>
 
-          <div
-            style={{
-              backgroundColor: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-md)',
-            }}
-            className="flex items-center gap-2 px-3 py-2 flex-1 max-w-xs"
-          >
-            <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
-            <input
-              type="text"
-              placeholder="Search rooms..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+          {/* Search + refresh */}
+          <div className="flex items-center gap-3">
+            <div
               style={{
-                background: 'transparent',
-                border: 'none',
-                outline: 'none',
-                color: 'var(--color-text)',
-                fontSize: '13px',
-                width: '100%',
+                display:         'flex',
+                alignItems:      'center',
+                gap:             8,
+                backgroundColor: 'var(--color-surface)',
+                border:          '1px solid var(--color-border)',
+                borderRadius:    'var(--radius-lg)',
+                padding:         '8px 14px',
+                width:           '260px',
               }}
-            />
-          </div>
+            >
+              <Search size={14} style={{ color: 'var(--color-text-muted)', flexShrink: 0 }} />
+              <input
+                type="text"
+                placeholder="Search rooms..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{
+                  background: 'transparent',
+                  border:     'none',
+                  outline:    'none',
+                  color:      'var(--color-text)',
+                  fontSize:   '13px',
+                  width:      '100%',
+                }}
+              />
+            </div>
 
-          <button
-            onClick={() => { fetchMyRooms(); fetchPublicRooms() }}
-            style={{ color: 'var(--color-text-muted)' }}
-            className="hover:text-[var(--color-text)] transition-colors p-1"
-          >
-            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-          </button>
+            <button
+              onClick={() => { fetchMyRooms(); fetchPublicRooms() }}
+              style={{
+                backgroundColor: 'var(--color-surface)',
+                border:          '1px solid var(--color-border)',
+                borderRadius:    'var(--radius-lg)',
+                padding:         '8px 10px',
+                cursor:          'pointer',
+                color:           'var(--color-text-muted)',
+                display:         'flex',
+                alignItems:      'center',
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.color = 'var(--color-text)'}
+              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--color-text-muted)'}
+            >
+              <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
+            </button>
+          </div>
         </div>
 
+        {/* Room grid */}
         {loading && filteredRooms.length === 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[...Array(6)].map((_, i) => (
+            {[...Array(3)].map((_, i) => (
               <div
                 key={i}
                 style={{
                   backgroundColor: 'var(--color-surface)',
-                  border: '1px solid var(--color-border)',
-                  borderRadius: 'var(--radius-lg)',
-                  height: '100px',
-                  animation: 'pulse 2s infinite',
+                  border:          '1px solid var(--color-border)',
+                  borderRadius:    'var(--radius-lg)',
+                  height:          140,
+                  opacity:         1 - i * 0.2,
                 }}
               />
             ))}
@@ -198,15 +201,16 @@ export default function RoomsPage() {
           <div
             style={{
               backgroundColor: 'var(--color-surface)',
-              border: '1px solid var(--color-border)',
-              borderRadius: 'var(--radius-lg)',
+              border:          '1px solid var(--color-border)',
+              borderRadius:    'var(--radius-lg)',
+              padding:         '60px 24px',
+              textAlign:       'center',
             }}
-            className="flex flex-col items-center justify-center py-16 px-6 text-center"
           >
-            <p style={{ color: 'var(--color-text)' }} className="text-base font-medium mb-1">
+            <p style={{ color: 'var(--color-text)', fontSize: '15px', fontWeight: 600, marginBottom: 6 }}>
               {searchQuery ? 'No rooms match your search' : activeTab === 'my' ? 'No rooms yet' : 'No public rooms'}
             </p>
-            <p style={{ color: 'var(--color-text-muted)' }} className="text-sm mb-4">
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '13px', marginBottom: 16 }}>
               {activeTab === 'my' && !searchQuery && 'Create your first room to get started'}
             </p>
             {activeTab === 'my' && !searchQuery && (
@@ -214,12 +218,19 @@ export default function RoomsPage() {
                 onClick={() => setShowModal(true)}
                 style={{
                   backgroundColor: 'var(--color-brand)',
-                  borderRadius: 'var(--radius-md)',
-                  color: 'white',
+                  borderRadius:    'var(--radius-md)',
+                  color:           'white',
+                  border:          'none',
+                  padding:         '9px 20px',
+                  fontSize:        '13px',
+                  fontWeight:      600,
+                  cursor:          'pointer',
+                  display:         'inline-flex',
+                  alignItems:      'center',
+                  gap:             6,
                 }}
-                className="flex items-center gap-2 px-4 py-2 text-sm font-semibold hover:opacity-90"
               >
-                <Plus size={15} />
+                <Plus size={14} />
                 Create room
               </button>
             )}
@@ -227,11 +238,7 @@ export default function RoomsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {filteredRooms.map((room) => (
-              <RoomCard
-                key={room.id}
-                room={room}
-                onDelete={activeTab === 'my' ? handleDelete : undefined}
-              />
+              <RoomCard key={room.id} room={room} />
             ))}
           </div>
         )}
