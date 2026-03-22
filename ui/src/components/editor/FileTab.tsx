@@ -54,9 +54,10 @@ export default function FileTabs({
               backgroundColor: isActive
                 ? 'var(--color-bg)'
                 : 'transparent',
-              borderBottom: isActive
+              borderTop: isActive
                 ? '2px solid var(--color-brand)'
                 : '2px solid transparent',
+              borderBottom: 'none',
               flexShrink: 0,
             }}
             className="group"
