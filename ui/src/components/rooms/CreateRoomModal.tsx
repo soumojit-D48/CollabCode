@@ -4,14 +4,14 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { X, Loader2, Plus } from 'lucide-react'
+import { X, Loader2 } from 'lucide-react'
 import { useRoomStore } from '@/store/room.store'
 import { useRouter } from 'next/navigation'
 import { Language } from '@/types'
 
 const LANGUAGES: Language[] = [
-  'javascript', 'typescript', 'python',
-  'go', 'rust', 'java', 'cpp', 'c',
+  'javascript','typescript','python',
+  'go','rust','java','cpp','c',
 ]
 
 const createRoomSchema = z.object({
@@ -29,46 +29,40 @@ interface CreateRoomModalProps {
 export default function CreateRoomModal({ onClose }: CreateRoomModalProps) {
   const router = useRouter()
   const { createRoom, loading } = useRoomStore()
+  const [visibility, setVisibility] = useState<'private' | 'public'>('private')
 
   const {
     register,
     handleSubmit,
-    watch,
     setValue,
     formState: { errors },
   } = useForm<CreateRoomForm>({
     resolver: zodResolver(createRoomSchema),
-    defaultValues: {
-      language: 'typescript',
-      isPublic: false,
-    },
+    defaultValues: { language: 'typescript', isPublic: false },
   })
-
-  const isPublic = watch('isPublic')
 
   const onSubmit = async (data: CreateRoomForm) => {
     try {
-      const room = await createRoom(data)
+      const room = await createRoom({ ...data, isPublic: visibility === 'public' })
       onClose()
-      router.push(`/rooms/${room.id}`)
-    } catch {
-    }
+      router.push(`/room/${room.id}`)
+    } catch {}
   }
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ backgroundColor: 'rgba(0,0,0,0.7)' }}
+      style={{ backgroundColor: 'rgba(0,0,0,0.75)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      {/* Modal */}
       <div
         style={{
           backgroundColor: 'var(--color-surface)',
-          border: '1px solid var(--color-border)',
-          borderRadius: 'var(--radius-lg)',
-          width: '100%',
-          maxWidth: '440px',
+          border:          '1px solid var(--color-border)',
+          borderRadius:    'var(--radius-lg)',
+          width:           '100%',
+          maxWidth:        '460px',
+          boxShadow:       '0 24px 48px rgba(0,0,0,0.4)',
         }}
       >
         {/* Header */}
@@ -76,7 +70,7 @@ export default function CreateRoomModal({ onClose }: CreateRoomModalProps) {
           style={{ borderBottom: '1px solid var(--color-border)' }}
           className="flex items-center justify-between px-6 py-4"
         >
-          <h2 style={{ color: 'var(--color-text)' }} className="font-semibold text-base">
+          <h2 style={{ color: 'var(--color-text)', fontSize: '15px', fontWeight: 700 }}>
             Create a new room
           </h2>
           <button
@@ -88,14 +82,14 @@ export default function CreateRoomModal({ onClose }: CreateRoomModalProps) {
           </button>
         </div>
 
-        {/* Body */}
+        {/* Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-5">
 
           {/* Room name */}
           <div>
             <label
-              style={{ color: 'var(--color-text-dim)' }}
-              className="block text-sm font-medium mb-1.5"
+              style={{ color: 'var(--color-text-dim)', fontSize: '13px', fontWeight: 500 }}
+              className="block mb-2"
             >
               Room name
             </label>
@@ -105,15 +99,20 @@ export default function CreateRoomModal({ onClose }: CreateRoomModalProps) {
               placeholder="my-awesome-project"
               style={{
                 backgroundColor: 'var(--color-surface-2)',
-                border: `1px solid ${errors.name ? 'var(--color-danger)' : 'var(--color-border)'}`,
-                borderRadius: 'var(--radius-md)',
-                color: 'var(--color-text)',
-                fontFamily: 'var(--font-mono)',
+                border:          `1px solid ${errors.name ? 'var(--color-danger)' : 'var(--color-border)'}`,
+                borderRadius:    'var(--radius-md)',
+                color:           'var(--color-text)',
+                fontFamily:      'var(--font-mono)',
+                fontSize:        '13px',
+                width:           '100%',
+                padding:         '10px 12px',
+                outline:         'none',
               }}
-              className="w-full px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand)]"
+              onFocus={(e)  => e.target.style.borderColor = 'var(--color-brand)'}
+              onBlur={(e)   => e.target.style.borderColor = errors.name ? 'var(--color-danger)' : 'var(--color-border)'}
             />
             {errors.name && (
-              <p style={{ color: 'var(--color-danger)' }} className="text-xs mt-1">
+              <p style={{ color: 'var(--color-danger)', fontSize: '12px', marginTop: 4 }}>
                 {errors.name.message}
               </p>
             )}
@@ -122,8 +121,8 @@ export default function CreateRoomModal({ onClose }: CreateRoomModalProps) {
           {/* Language */}
           <div>
             <label
-              style={{ color: 'var(--color-text-dim)' }}
-              className="block text-sm font-medium mb-1.5"
+              style={{ color: 'var(--color-text-dim)', fontSize: '13px', fontWeight: 500 }}
+              className="block mb-2"
             >
               Language
             </label>
@@ -131,15 +130,23 @@ export default function CreateRoomModal({ onClose }: CreateRoomModalProps) {
               {...register('language')}
               style={{
                 backgroundColor: 'var(--color-surface-2)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                color: 'var(--color-text)',
-                fontFamily: 'var(--font-mono)',
+                border:          '1px solid var(--color-border)',
+                borderRadius:    'var(--radius-md)',
+                color:           'var(--color-text)',
+                fontFamily:      'var(--font-mono)',
+                fontSize:        '13px',
+                width:           '100%',
+                padding:         '10px 12px',
+                outline:         'none',
+                cursor:          'pointer',
               }}
-              className="w-full px-3 py-2.5 text-sm outline-none focus:border-[var(--color-brand)]"
+              onFocus={(e)  => e.target.style.borderColor = 'var(--color-brand)'}
+              onBlur={(e)   => e.target.style.borderColor = 'var(--color-border)'}
             >
               {LANGUAGES.map((lang) => (
-                <option key={lang} value={lang}
+                <option
+                  key={lang}
+                  value={lang}
                   style={{ backgroundColor: 'var(--color-surface-2)' }}
                 >
                   {lang}
@@ -148,77 +155,75 @@ export default function CreateRoomModal({ onClose }: CreateRoomModalProps) {
             </select>
           </div>
 
-          {/* Public toggle */}
-          <div className="flex items-center justify-between">
-            <div>
-              <p style={{ color: 'var(--color-text)' }} className="text-sm font-medium">
-                Public room
-              </p>
-              <p style={{ color: 'var(--color-text-muted)' }} className="text-xs mt-0.5">
-                Anyone can discover and join
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setValue('isPublic', !isPublic)}
+          {/* Visibility toggle buttons */}
+          <div>
+            <label
+              style={{ color: 'var(--color-text-dim)', fontSize: '13px', fontWeight: 500 }}
+              className="block mb-2"
+            >
+              Visibility
+            </label>
+            <div
               style={{
-                backgroundColor: isPublic ? 'var(--color-brand)' : 'var(--color-surface-3)',
-                border: '1px solid var(--color-border)',
-                borderRadius: '20px',
-                width: '44px',
-                height: '24px',
-                position: 'relative',
-                transition: 'background-color 0.2s',
-                flexShrink: 0,
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: 8,
               }}
             >
-              <span
-                style={{
-                  position: 'absolute',
-                  top: '3px',
-                  left: isPublic ? '22px' : '3px',
-                  width: '16px',
-                  height: '16px',
-                  backgroundColor: 'white',
-                  borderRadius: '50%',
-                  transition: 'left 0.2s',
-                }}
-              />
-            </button>
+              {(['private', 'public'] as const).map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  onClick={() => setVisibility(v)}
+                  style={{
+                    padding:         '10px',
+                    borderRadius:    'var(--radius-md)',
+                    fontSize:        '13px',
+                    fontWeight:      600,
+                    cursor:          'pointer',
+                    transition:      'all 0.15s',
+                    border: visibility === v
+                      ? '2px solid var(--color-brand)'
+                      : '2px solid var(--color-border)',
+                    backgroundColor: visibility === v
+                      ? 'var(--color-brand-dim)'
+                      : 'var(--color-surface-2)',
+                    color: visibility === v
+                      ? 'var(--color-brand)'
+                      : 'var(--color-text-muted)',
+                  }}
+                >
+                  {v.charAt(0).toUpperCase() + v.slice(1)}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex gap-3 pt-1">
-            <button
-              type="button"
-              onClick={onClose}
-              style={{
-                backgroundColor: 'var(--color-surface-2)',
-                border: '1px solid var(--color-border)',
-                borderRadius: 'var(--radius-md)',
-                color: 'var(--color-text-dim)',
-              }}
-              className="flex-1 py-2.5 text-sm font-medium hover:border-[var(--color-border-light)] transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                backgroundColor: 'var(--color-brand)',
-                borderRadius: 'var(--radius-md)',
-                color: 'white',
-              }}
-              className="flex-1 py-2.5 text-sm font-semibold flex items-center justify-center gap-2 hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity"
-            >
-              {loading
-                ? <Loader2 size={15} className="animate-spin" />
-                : <Plus size={15} />
-              }
-              {loading ? 'Creating...' : 'Create room'}
-            </button>
-          </div>
+          {/* Submit */}
+          <button
+            type="submit"
+            disabled={loading}
+            style={{
+              width:           '100%',
+              backgroundColor: 'var(--color-brand)',
+              borderRadius:    'var(--radius-md)',
+              color:           'white',
+              border:          'none',
+              padding:         '11px',
+              fontSize:        '14px',
+              fontWeight:      600,
+              cursor:          loading ? 'not-allowed' : 'pointer',
+              opacity:         loading ? 0.7 : 1,
+              display:         'flex',
+              alignItems:      'center',
+              justifyContent:  'center',
+              gap:             8,
+              marginTop:       4,
+            }}
+          >
+            {loading && <Loader2 size={15} className="animate-spin" />}
+            {loading ? 'Creating...' : 'Create room'}
+          </button>
         </form>
       </div>
     </div>
