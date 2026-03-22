@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { Code2, LogOut, User } from 'lucide-react'
+import { LogOut } from 'lucide-react'
 import { useAuthStore } from '@/store/auth.store'
 
 export default function Navbar() {
@@ -17,71 +17,83 @@ export default function Navbar() {
     <nav
       style={{
         backgroundColor: 'var(--color-surface)',
-        borderBottom: '1px solid var(--color-border)',
+        borderBottom:    '1px solid var(--color-border)',
+        height:          '52px',
+        display:         'flex',
+        alignItems:      'center',
+        justifyContent:  'space-between',
+        padding:         '0 24px',
       }}
-      className="h-14 flex items-center justify-between px-6"
     >
+      {/* Logo */}
       <div className="flex items-center gap-2.5">
         <div
           style={{
             backgroundColor: 'var(--color-brand)',
-            borderRadius: 'var(--radius-md)',
+            borderRadius:    '8px',
+            width:           32,
+            height:          32,
+            display:         'flex',
+            alignItems:      'center',
+            justifyContent:  'center',
+            fontFamily:      'var(--font-mono)',
+            fontWeight:      800,
+            fontSize:        '14px',
+            color:           'white',
           }}
-          className="p-1.5"
         >
-          <Code2 size={18} color="white" />
+          {'</>'}
         </div>
         <span
           style={{
             fontFamily: 'var(--font-mono)',
-            color: 'var(--color-text)',
+            fontWeight: 700,
+            fontSize:   '15px',
+            color:      'var(--color-text)',
           }}
-          className="text-base font-bold"
         >
           CollabCode
         </span>
       </div>
 
+      {/* Right */}
       <div className="flex items-center gap-4">
-        {/* User info */}
-        <div className="flex items-center gap-2">
-          <div
-            style={{
-              backgroundColor: 'var(--color-surface-2)',
-              border: '1px solid var(--color-border)',
-              borderRadius: '50%',
-            }}
-            className="w-8 h-8 flex items-center justify-center"
-          >
-            <User size={14} style={{ color: 'var(--color-text-muted)' }} />
-          </div>
-          <span
-            style={{
-              fontFamily: 'var(--font-mono)',
-              color: 'var(--color-text-dim)',
-              fontSize: '13px',
-            }}
-          >
-            {user?.username}
-          </span>
-        </div>
-
-        {/* Divider */}
-        <div
+        <span
           style={{
-            width: '1px',
-            height: '20px',
-            backgroundColor: 'var(--color-border)',
+            fontFamily: 'var(--font-mono)',
+            fontSize:   '13px',
+            color:      'var(--color-text-muted)',
           }}
-        />
+        >
+          @{user?.username}
+        </span>
 
         <button
           onClick={handleLogout}
-          style={{ color: 'var(--color-text-muted)' }}
-          className="flex items-center gap-1.5 text-sm hover:text-[var(--color-danger)] transition-colors"
+          style={{
+            display:     'flex',
+            alignItems:  'center',
+            gap:         6,
+            color:       'var(--color-text-muted)',
+            background:  'none',
+            border:      'none',
+            cursor:      'pointer',
+            fontSize:    '13px',
+            padding:     '6px 10px',
+            borderRadius:'var(--radius-md)',
+            transition:  'all 0.15s',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'var(--color-surface-2)'
+            e.currentTarget.style.color = 'var(--color-text)'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent'
+            e.currentTarget.style.color = 'var(--color-text-muted)'
+          }}
         >
           <LogOut size={15} />
-          <span>Logout</span>
+          Logout
         </button>
       </div>
     </nav>
